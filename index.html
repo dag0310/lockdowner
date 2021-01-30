@@ -78,7 +78,7 @@ const buildEntriesFuture = (entries, lockdownEndDate, lockdownEndValue) => {
 
   document.getElementById('chartText').innerText = `Die rote Linie zeigt den benötigten Verlauf an, um den Wert ${LOCKDOWN_END_VALUE} bis zum ${dayjs(LOCKDOWN_END_DATE).format('DD.MM.YYYY')} zu erreichen.`;
   const ctx = document.getElementById('chart').getContext('2d');
-  const char = new Chart(ctx, {
+  const chart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: entriesFuture.map(entry => dayjs(entry.date).format('DD.MM.YYYY')),
