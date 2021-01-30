@@ -66,7 +66,7 @@ const buildEntriesFuture = (entries, lockdownEndDate, lockdownEndValue) => {
   for (let day = 0; day <= daysDiff; day += 1) {
     entriesFuture.push({
       date: dayjs(mostRecentDay.date).add(day, 'days').format('YYYY-MM-DD'),
-      sevenDayIncidency: mostRecentDay.sevenDayIncidency + (valuePerDay * day)
+      sevenDayIncidency: Math.round(mostRecentDay.sevenDayIncidency + (valuePerDay * day)),
     })
   }
   return entriesFuture;
@@ -74,6 +74,9 @@ const buildEntriesFuture = (entries, lockdownEndDate, lockdownEndValue) => {
 
 (async () => {
   const entriesRaw = await (await fetch('covid-austria.json')).json();
+  for (const entry of entriesRaw) {
+    entry.sevenDayIncidency = Math.round(entry.sevenDayIncidency);
+  }
   const entriesPast = (LAST_X_DAYS != null) ? entriesRaw.slice(entriesRaw.length - LAST_X_DAYS) : entriesRaw;
   const entriesFuture = buildEntriesFuture(entriesPast, LOCKDOWN_END_DATE, LOCKDOWN_END_VALUE);
 
