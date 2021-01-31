@@ -37,9 +37,14 @@
 <body>
 <h1>Lockdowner</h1>
 <h3>7-Tage-Inzidenz Österreich</h3>
+<select id="pastDays" style="width: 100px; float: right; margin-left: 15px;">
+  <option value="45">45 Tage</option>
+  <option value="90">90 Tage</option>
+  <option value="120">120 Tage</option>
+  <option value="">Gesamt</option>
+</select>
 <p id="latestValue"></p>
 <canvas id="chart" width="100%" height="100"></canvas>
-<p>Die letzten <input type="number" id="lastXDays" value="100" min="1" step="1" autocomplete="off" inputmode="numeric" style="width: 75px;"> Tage anzeigen.</p>
 <p id="chartText"></p>
 <p>Laut MedUni-Wien-Vizerektor Oswald&nbsp;Wagner ist das Ziel die <a href="https://de.wikipedia.org/wiki/Inzidenz_(Epidemiologie)#7-Tage-Inzidenz" target="_blank"><strong>7-Tage-Inzidenz</strong></a> auf <strong>deutlich unter 50</strong> zu senken. Quelle: <a href="https://orf.at/stories/3197576/" target="_blank">orf.at / 16.1.2021</a></p>
 <p>Datenquelle: AGES/EMS</p>
@@ -75,8 +80,8 @@ const buildEntriesFuture = (entriesPast, lockdownEndDate, lockdownEndValue) => {
 };
 
 const updateChart = (chart, entries) => {
-  const lastXDays = parseInt(document.getElementById('lastXDays').value, 10);
-  const entriesPast = (lastXDays != null) ? entries.slice(Math.max(0, entries.length - lastXDays)) : entries;
+  const pastDays = parseInt(document.getElementById('pastDays').value, 10);
+  const entriesPast = (pastDays != null) ? entries.slice(Math.max(0, entries.length - pastDays)) : entries;
   const entriesFuture = buildEntriesFuture(entriesPast, LOCKDOWN_END_DATE, LOCKDOWN_END_VALUE);
 
   const latestEntry = entriesPast[entriesPast.length - 1];
@@ -145,7 +150,7 @@ const updateChart = (chart, entries) => {
     },
   });
   const entries = await (await fetch('covid-austria.json')).json();
-  document.getElementById('lastXDays').addEventListener('input', () => { updateChart(chart, entries); });
+  document.getElementById('pastDays').addEventListener('input', () => { updateChart(chart, entries); });
   updateChart(chart, entries);
 })();
 </script>
