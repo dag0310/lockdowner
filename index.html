@@ -68,34 +68,30 @@ const buildEntriesFuture = (entriesPast, lockdownEndDate, lockdownEndValue) => {
   for (let day = 1; day <= daysDiff; day += 1) {
     entriesFuture.push({
       date: dayjs(mostRecentDay.date).add(day, 'days').format('YYYY-MM-DD'),
-      sevenDayIncidency: Math.round(mostRecentDay.sevenDayIncidency + (valuePerDay * day)),
+      sevenDayIncidency: mostRecentDay.sevenDayIncidency + (valuePerDay * day),
     })
   }
   return entriesFuture;
 };
 
-const fetchEntriesPastAndFuture = (entriesRaw, lastXDays) => {
-  for (const entry of entriesRaw) {
-    entry.sevenDayIncidency = Math.round(entry.sevenDayIncidency);
-  }
-  const entriesPast = (lastXDays != null) ? entriesRaw.slice(Math.max(0, entriesRaw.length - lastXDays)) : entriesRaw;
-  const entriesFuture = buildEntriesFuture(entriesPast, LOCKDOWN_END_DATE, LOCKDOWN_END_VALUE);
-  return [entriesPast, entriesFuture];
-};
-
 const updateChart = (chart, entries) => {
   const lastXDays = parseInt(document.getElementById('lastXDays').value, 10);
-  const [entriesPast, entriesFuture] = fetchEntriesPastAndFuture(entries, lastXDays);
+  const entriesPast = (lastXDays != null) ? entries.slice(Math.max(0, entries.length - lastXDays)) : entries;
+  const entriesFuture = buildEntriesFuture(entriesPast, LOCKDOWN_END_DATE, LOCKDOWN_END_VALUE);
+
   const latestEntry = entriesPast[entriesPast.length - 1];
-  document.getElementById('latestValue').innerHTML = latestEntry ? `Letzter Wert vom ${dayjs(latestEntry.date).format('DD.MM.YYYY')}: <b>${latestEntry.sevenDayIncidency}</b>` : '';
+  document.getElementById('latestValue').innerHTML = latestEntry ? `Letzter Wert vom ${dayjs(latestEntry.date).format('DD.MM.YYYY')}: <b>${latestEntry.sevenDayIncidency.toFixed()}</b>` : '';
+
   chart.data.labels = entriesFuture.map(entry => dayjs(entry.date).format('DD.MM.YYYY'));
-  chart.data.datasets[0].data = entriesPast.map(entry => entry.sevenDayIncidency);
-  chart.data.datasets[1].data = entriesFuture.map(entry => entry.sevenDayIncidency);
+  const mappingFn = (entry) => Number.isFinite(entry.sevenDayIncidency) ? Math.round(entry.sevenDayIncidency) : entry.sevenDayIncidency;
+  chart.data.datasets[0].data = entriesPast.map(mappingFn);
+  chart.data.datasets[1].data = entriesFuture.map(mappingFn);
   chart.update();
+
+  document.getElementById('chartText').innerText = `Die blaue Linie zeigt den benötigten Verlauf an, um den Inzidenz-Wert ${LOCKDOWN_END_VALUE} bis zum ${dayjs(LOCKDOWN_END_DATE).format('DD.MM.YYYY')} zu erreichen.`;
 };
 
 (async () => {
-  document.getElementById('chartText').innerText = `Die blaue Linie zeigt den benötigten Verlauf an, um den Inzidenz-Wert ${LOCKDOWN_END_VALUE} bis zum ${dayjs(LOCKDOWN_END_DATE).format('DD.MM.YYYY')} zu erreichen.`;
   const ctx = document.getElementById('chart').getContext('2d');
   const chart = new Chart(ctx, {
     type: 'line',
