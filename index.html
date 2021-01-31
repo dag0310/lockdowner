@@ -141,6 +141,7 @@ const openTip = (chart, datasetIndex, pointIndex) => {
       },
       tooltips: {
         intersect: false,
+        mode: 'index',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         callbacks: {
           label: (tooltipItem) => tooltipItem.yLabel.toFixed(0),
