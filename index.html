@@ -88,9 +88,8 @@ const updateChart = (chart, entries) => {
   document.getElementById('latestValue').innerHTML = latestEntry ? `Letzter Wert vom ${dayjs(latestEntry.date).format('DD.MM.YYYY')}: <b>${latestEntry.sevenDayIncidency.toFixed()}</b>` : '';
 
   chart.data.labels = entriesFuture.map(entry => dayjs(entry.date).format('DD.MM.YYYY'));
-  const mappingFn = (entry) => Number.isFinite(entry.sevenDayIncidency) ? Math.round(entry.sevenDayIncidency) : entry.sevenDayIncidency;
-  chart.data.datasets[0].data = entriesPast.map(mappingFn);
-  chart.data.datasets[1].data = entriesFuture.map(mappingFn);
+  chart.data.datasets[0].data = entriesPast.map((entry) => entry.sevenDayIncidency);
+  chart.data.datasets[1].data = entriesFuture.map((entry) => entry.sevenDayIncidency);
   chart.update();
 
   document.getElementById('chartText').innerText = `Die blaue Linie zeigt den benötigten Verlauf an, um den Inzidenz-Wert ${LOCKDOWN_END_VALUE} bis zum ${dayjs(LOCKDOWN_END_DATE).format('DD.MM.YYYY')} zu erreichen.`;
@@ -129,6 +128,9 @@ const updateChart = (chart, entries) => {
       },
       tooltips: {
         intersect: false,
+        callbacks: {
+          label: (tooltipItem) => tooltipItem.yLabel.toFixed(0),
+        },
       },
       legend: {
         onClick: null,
