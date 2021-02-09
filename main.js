@@ -21,7 +21,11 @@ const buildEntriesFuture = (entriesPast, targetDate, targetValue) => {
 };
 
 const updateChart = (chart, entries) => {
-  const targetDate = dayjs(document.getElementById('targetDate').value);
+  let targetDate = dayjs(document.getElementById('targetDate').value);
+  while (dayjs().diff(targetDate, 'day') > 0) {
+    targetDate = targetDate.add(3, 'weeks');
+    document.getElementById('targetDate').value = targetDate.format('YYYY-MM-DD');
+  }
   const targetValue = document.getElementById('targetValue').valueAsNumber;
 
   const pastDays = parseInt(document.getElementById('pastDays').value, 10);
