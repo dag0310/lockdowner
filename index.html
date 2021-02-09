@@ -151,6 +151,11 @@ const openTip = (chart, datasetIndex, pointIndex) => {
       legend: {
         onClick: null,
       },
+      elements: {
+        line: {
+          tension: 0,
+        },
+      },
       scales: {
         xAxes: [{
           scaleLabel: {
