@@ -62,6 +62,7 @@ const buildEntriesFuture = (entriesPast, lockdownEndDate, lockdownEndValue) => {
     return [];
   }
   const entriesFuture = JSON.parse(JSON.stringify(entriesPast))
+  entriesFuture.pop();
   for (const entry of entriesFuture) {
     entry.sevenDayIncidency = null;
   }
@@ -69,7 +70,7 @@ const buildEntriesFuture = (entriesPast, lockdownEndDate, lockdownEndValue) => {
   const daysDiff = dayjs(lockdownEndDate).diff(mostRecentDay.date, 'day');
   const valueDiff = lockdownEndValue - mostRecentDay.sevenDayIncidency;
   const valuePerDay = valueDiff / daysDiff;
-  for (let day = 1; day <= daysDiff; day += 1) {
+  for (let day = 0; day <= daysDiff; day += 1) {
     entriesFuture.push({
       date: dayjs(mostRecentDay.date).add(day, 'days').format('YYYY-MM-DD'),
       sevenDayIncidency: mostRecentDay.sevenDayIncidency + (valuePerDay * day),
