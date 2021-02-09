@@ -54,10 +54,10 @@
 'use strict'
 
 // TODO: Make these start parameters configurable
-const LOCKDOWN_END_DATE = '2021-02-08'
-const LOCKDOWN_END_VALUE = 50
+const TARGET_DATE = dayjs('2021-02-28');
+const TARGET_VALUE = 50;
 
-const buildEntriesFuture = (entriesPast, lockdownEndDate, lockdownEndValue) => {
+const buildEntriesFuture = (entriesPast, targetDate, targetValue) => {
   if (entriesPast.length < 1) {
     return [];
   }
@@ -67,8 +67,8 @@ const buildEntriesFuture = (entriesPast, lockdownEndDate, lockdownEndValue) => {
     entry.sevenDayIncidency = null;
   }
   const mostRecentDay = entriesPast[entriesPast.length - 1];
-  const daysDiff = dayjs(lockdownEndDate).diff(mostRecentDay.date, 'day');
-  const valueDiff = lockdownEndValue - mostRecentDay.sevenDayIncidency;
+  const daysDiff = targetDate.diff(mostRecentDay.date, 'day');
+  const valueDiff = targetValue - mostRecentDay.sevenDayIncidency;
   const valuePerDay = valueDiff / daysDiff;
   for (let day = 0; day <= daysDiff; day += 1) {
     entriesFuture.push({
@@ -82,14 +82,14 @@ const buildEntriesFuture = (entriesPast, lockdownEndDate, lockdownEndValue) => {
 const updateChart = (chart, entries) => {
   const pastDays = parseInt(document.getElementById('pastDays').value, 10);
   const entriesPast = (pastDays != null) ? entries.slice(Math.max(0, entries.length - pastDays)) : entries;
-  const entriesFuture = buildEntriesFuture(entriesPast, LOCKDOWN_END_DATE, LOCKDOWN_END_VALUE);
+  const entriesFuture = buildEntriesFuture(entriesPast, TARGET_DATE, TARGET_VALUE);
 
   chart.data.labels = entriesFuture.map(entry => dayjs(entry.date).format('DD.MM.YYYY'));
   chart.data.datasets[0].data = entriesPast.map((entry) => entry.sevenDayIncidency);
   chart.data.datasets[1].data = entriesFuture.map((entry) => entry.sevenDayIncidency);
   chart.update();
 
-  document.getElementById('chartText').innerText = `Die blaue Linie zeigt den benötigten Verlauf an, um den Inzidenz-Wert ${LOCKDOWN_END_VALUE} bis zum ${dayjs(LOCKDOWN_END_DATE).format('DD.MM.YYYY')} zu erreichen.`;
+  document.getElementById('chartText').innerText = `Die blaue Linie zeigt den benötigten Verlauf an, um den Inzidenz-Wert ${TARGET_VALUE} bis zum ${TARGET_DATE.format('DD.MM.YYYY')} zu erreichen.`;
 };
 
 const openTip = (chart, datasetIndex, pointIndex) => {
