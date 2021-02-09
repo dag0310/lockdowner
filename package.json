@@ -1,0 +1,32 @@
+{
+  "name": "lockdowner",
+  "version": "1.0.0",
+  "description": "Nachschauen, wie es mit dem Lockdown vorangeht.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dag0310/lockdowner.git"
+  },
+  "keywords": [
+    "lockdown",
+    "covid-19",
+    "corona",
+    "coronavirus",
+    "diagramm",
+    "prediction"
+  ],
+  "author": "Daniel Geymayer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dag0310/lockdowner/issues"
+  },
+  "homepage": "https://github.com/dag0310/lockdowner#readme",
+  "devDependencies": {
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  }
+}

@@ -1,5 +1,3 @@
-'use strict'
-
 // TODO: Make these start parameters configurable
 const TARGET_DATE = dayjs('2021-02-28');
 const TARGET_VALUE = 50;
@@ -8,7 +6,7 @@ const buildEntriesFuture = (entriesPast, targetDate, targetValue) => {
   if (entriesPast.length < 1) {
     return [];
   }
-  const entriesFuture = JSON.parse(JSON.stringify(entriesPast))
+  const entriesFuture = JSON.parse(JSON.stringify(entriesPast));
   entriesFuture.pop();
   for (const entry of entriesFuture) {
     entry.sevenDayIncidency = null;
@@ -21,7 +19,7 @@ const buildEntriesFuture = (entriesPast, targetDate, targetValue) => {
     entriesFuture.push({
       date: dayjs(mostRecentDay.date).add(day, 'days').format('YYYY-MM-DD'),
       sevenDayIncidency: mostRecentDay.sevenDayIncidency + (valuePerDay * day),
-    })
+    });
   }
   return entriesFuture;
 };
@@ -31,7 +29,7 @@ const updateChart = (chart, entries) => {
   const entriesPast = (pastDays != null) ? entries.slice(Math.max(0, entries.length - pastDays)) : entries;
   const entriesFuture = buildEntriesFuture(entriesPast, TARGET_DATE, TARGET_VALUE);
 
-  chart.data.labels = entriesFuture.map(entry => dayjs(entry.date).format('DD.MM.YYYY'));
+  chart.data.labels = entriesFuture.map((entry) => dayjs(entry.date).format('DD.MM.YYYY'));
   chart.data.datasets[0].data = entriesPast.map((entry) => entry.sevenDayIncidency);
   chart.data.datasets[1].data = entriesFuture.map((entry) => entry.sevenDayIncidency);
   chart.update();
@@ -43,10 +41,10 @@ const openTip = (chart, datasetIndex, pointIndex) => {
   if (chart.tooltip._active == null) {
     chart.tooltip._active = [];
   }
-  var activeElements = chart.tooltip._active;
-  var requestedElem = chart.getDatasetMeta(datasetIndex).data[pointIndex];
+  const activeElements = chart.tooltip._active;
+  const requestedElem = chart.getDatasetMeta(datasetIndex).data[pointIndex];
   for (let idx = 0; idx < activeElements.length; idx += 1) {
-    if (requestedElem._index == activeElements[idx]._index) {
+    if (requestedElem._index === activeElements[idx]._index) {
       return;
     }
   }
@@ -54,7 +52,7 @@ const openTip = (chart, datasetIndex, pointIndex) => {
   chart.tooltip._active = activeElements;
   chart.tooltip.update(true);
   chart.draw();
-}
+};
 
 (async () => {
   const ctx = document.getElementById('chart').getContext('2d');
@@ -72,7 +70,7 @@ const openTip = (chart, datasetIndex, pointIndex) => {
           borderWidth: 2,
         },
         {
-          label: `notwendiger Verlauf`,
+          label: 'notwendiger Verlauf',
           pointRadius: 0,
           pointHoverRadius: 0,
           hitRadius: 5,
@@ -85,7 +83,7 @@ const openTip = (chart, datasetIndex, pointIndex) => {
     },
     options: {
       title: {
-        text: '7-Tage-Inzidenz Österreich'
+        text: '7-Tage-Inzidenz Österreich',
       },
       tooltips: {
         intersect: false,
@@ -111,7 +109,7 @@ const openTip = (chart, datasetIndex, pointIndex) => {
           scaleLabel: {
             display: true,
             labelString: 'Datum',
-          }
+          },
         }],
         yAxes: [{
           scaleLabel: {
