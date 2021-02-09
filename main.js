@@ -20,9 +20,9 @@ const buildEntriesFuture = (entriesPast, targetDate, targetValue) => {
   return entriesFuture;
 };
 
-const updateChart = (chart, entries) => {
+const updateChart = (chart, entries, firstRun) => {
   let targetDate = dayjs(document.getElementById('targetDate').value);
-  while (dayjs().diff(targetDate, 'day') > 0) {
+  while (firstRun && dayjs().diff(targetDate, 'day') > 0) {
     targetDate = targetDate.add(3, 'weeks');
     document.getElementById('targetDate').value = targetDate.format('YYYY-MM-DD');
   }
@@ -130,6 +130,6 @@ const openTip = (chart, datasetIndex, pointIndex) => {
   document.getElementById('pastDays').addEventListener('input', () => { updateChart(chart, entries); });
   document.getElementById('targetValue').addEventListener('input', () => { updateChart(chart, entries); });
   document.getElementById('targetDate').addEventListener('input', () => { updateChart(chart, entries); });
-  updateChart(chart, entries);
+  updateChart(chart, entries, true);
   openTip(chart, 0, chart.data.datasets[0].data.length - 1);
 })();
