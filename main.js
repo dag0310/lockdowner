@@ -1,7 +1,3 @@
-// TODO: Make these start parameters configurable
-const TARGET_DATE = dayjs('2021-02-28');
-const TARGET_VALUE = 50;
-
 const buildEntriesFuture = (entriesPast, targetDate, targetValue) => {
   if (entriesPast.length < 1) {
     return [];
@@ -25,16 +21,19 @@ const buildEntriesFuture = (entriesPast, targetDate, targetValue) => {
 };
 
 const updateChart = (chart, entries) => {
+  const targetDate = dayjs(document.getElementById('targetDate').value);
+  const targetValue = document.getElementById('targetValue').valueAsNumber;
+
   const pastDays = parseInt(document.getElementById('pastDays').value, 10);
   const entriesPast = (pastDays != null) ? entries.slice(Math.max(0, entries.length - pastDays)) : entries;
-  const entriesFuture = buildEntriesFuture(entriesPast, TARGET_DATE, TARGET_VALUE);
+  const entriesFuture = buildEntriesFuture(entriesPast, targetDate, targetValue);
 
   chart.data.labels = entriesFuture.map((entry) => dayjs(entry.date).format('DD.MM.YYYY'));
   chart.data.datasets[0].data = entriesPast.map((entry) => entry.sevenDayIncidency);
   chart.data.datasets[1].data = entriesFuture.map((entry) => entry.sevenDayIncidency);
   chart.update();
 
-  document.getElementById('chartText').innerText = `Die blaue Linie zeigt den benötigten Verlauf an, um den Inzidenz-Wert ${TARGET_VALUE} bis zum ${TARGET_DATE.format('DD.MM.YYYY')} zu erreichen.`;
+  document.getElementById('chartText').innerText = `Die blaue Linie zeigt den benötigten Verlauf an, um den Inzidenz-Wert ${targetValue} bis zum ${targetDate.format('DD.MM.YYYY')} zu erreichen.`;
 };
 
 const openTip = (chart, datasetIndex, pointIndex) => {
@@ -125,6 +124,8 @@ const openTip = (chart, datasetIndex, pointIndex) => {
   });
   const entries = await (await fetch('covid-austria.json')).json();
   document.getElementById('pastDays').addEventListener('input', () => { updateChart(chart, entries); });
+  document.getElementById('targetValue').addEventListener('input', () => { updateChart(chart, entries); });
+  document.getElementById('targetDate').addEventListener('input', () => { updateChart(chart, entries); });
   updateChart(chart, entries);
   openTip(chart, 0, chart.data.datasets[0].data.length - 1);
 })();
