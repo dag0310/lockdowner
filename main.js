@@ -20,12 +20,8 @@ const buildEntriesFuture = (entriesPast, targetDate, targetValue) => {
   return entriesFuture;
 };
 
-const updateChart = (chart, entries, firstRun) => {
-  let targetDate = dayjs(document.getElementById('targetDate').value);
-  while (firstRun && dayjs().diff(targetDate, 'day') > 0) {
-    targetDate = targetDate.add(3, 'weeks');
-    document.getElementById('targetDate').value = targetDate.format('YYYY-MM-DD');
-  }
+const updateChart = (chart, entries) => {
+  const targetDate = dayjs(document.getElementById('targetDate').value);
   const targetValue = document.getElementById('targetValue').valueAsNumber;
 
   const pastDays = parseInt(document.getElementById('pastDays').value, 10);
@@ -127,9 +123,10 @@ const openTip = (chart, datasetIndex, pointIndex) => {
     },
   });
   const entries = await (await fetch('covid-austria.json')).json();
+  document.getElementById('targetDate').value = dayjs().add(1, 'month').format('YYYY-MM-DD');
   document.getElementById('pastDays').addEventListener('input', () => { updateChart(chart, entries); });
   document.getElementById('targetValue').addEventListener('input', () => { updateChart(chart, entries); });
   document.getElementById('targetDate').addEventListener('input', () => { updateChart(chart, entries); });
-  updateChart(chart, entries, true);
+  updateChart(chart, entries);
   openTip(chart, 0, chart.data.datasets[0].data.length - 1);
 })();
