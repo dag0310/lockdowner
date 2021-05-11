@@ -123,7 +123,8 @@ const openTip = (chart, datasetIndex, pointIndex) => {
     },
   });
   const entries = await (await fetch('covid-austria.json')).json();
-  document.getElementById('targetDate').value = dayjs().add(1, 'month').format('YYYY-MM-DD');
+  const config = await (await fetch('config.json')).json();
+  document.getElementById('targetDate').value = (config.targetDate && dayjs(config.targetDate) >= dayjs().startOf('day')) ? dayjs(config.targetDate).format('YYYY-MM-DD') : dayjs().add(1, 'month').format('YYYY-MM-DD');
   document.getElementById('pastDays').addEventListener('input', () => { updateChart(chart, entries); });
   document.getElementById('targetValue').addEventListener('input', () => { updateChart(chart, entries); });
   document.getElementById('targetDate').addEventListener('input', () => { updateChart(chart, entries); });
